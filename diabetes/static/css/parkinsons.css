@@ -1,0 +1,179 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Background */
+body {
+    background-image: url('../images/63867a253eebc317a6b486f3_What is Parkinson_s 1.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Container */
+.parkinsons-container {
+    max-width: 500px;
+    width: 90%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    text-align: center;
+    margin: auto;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    background-image: url('static/images/d455e3be112235e6f70ce41be9ffd6d2.gif');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Heading */
+.parkinsons-container h1 {
+    color: #d32f2f;
+    font-size: 24px;
+}
+
+/* Image */
+.parkinsons-image {
+    width: 150px;
+    margin: 10px auto;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    padding: 12px;
+    border: 1px solid #d32f2f;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+input:focus {
+    border-color: #b71c1c;
+    box-shadow: 0 0 5px rgba(215, 47, 47, 0.5);
+}
+
+/* Button */
+button {
+    background: #d32f2f;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background: #b71c1c;
+}
+
+/* Result Box */
+.result-box {
+    margin-top: 20px;
+    padding: 10px;
+    background: #ffcdd2;
+    border-radius: 10px;
+}
+
+/* Dark Mode */
+.dark-mode {
+    background: #212121;
+    color: white;
+}
+
+.dark-mode input, 
+.dark-mode button {
+    background: #424242;
+    color: white;
+}
+
+.dark-mode button:hover {
+    background: #616161;
+}
+
+/* Dark Mode Toggle */
+.dark-mode-switch {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    width: 50px;
+    height: 25px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    background: #bdbdbd;
+    border-radius: 20px;
+    transition: 0.4s;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.4s;
+    left: 2px;
+    top: 1px;
+}
+
+input:checked + .slider {
+    background: #ff4081;
+}
+
+input:checked + .slider:before {
+    transform: translateX(25px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .parkinsons-container {
+        padding: 20px;
+        width: 95%;
+    }
+
+    input {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 16px;
+        padding: 12px;
+    }
+}

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Google Translate Script -->
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+<body data-theme="default">
+    <!-- Dark Mode Toggle Button -->
+    <div class="mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <!-- Background Toggle Button -->
+    <div class="background-toggle" onclick="toggleBackground()">
+        <i class="fas fa-video"></i>
+    </div>
+
+    <!-- Video Background -->
+    <video autoplay muted loop id="video-background">
+        <source src="{{ url_for('static', filename='videos/videoplayback.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Image Background -->
+    <div id="image-background"></div>
+
+    <!-- Language and Accessibility Features -->
+    <div class="accessibility-bar">
+        <div class="language-selector">
+            <!-- Google Translate Widget -->
+            <div id="google_translate_element" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="overlay">
+            <div class="container">
+                <h1 id="hero-title">Welcome to Health Disease Prediction</h1>
+                <p id="hero-subtitle">Predict diseases using advanced AI models.</p>
+                <div class="button-group">
+                    <a href="{{ url_for('diabetes_prediction') }}" class="button" id="diabetes-button">Diabetes Prediction</a>
+                    <a href="{{ url_for('heart_disease_prediction') }}" class="button" id="heart-button">Heart Disease Prediction</a>
+                    <a href="{{ url_for('parkinsons_prediction') }}" class="button" id="parkinsons-button">Parkinson's Prediction</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2 class="section-title" id="features-title">Our Features</h2>
+        <div class="feature-grid">
+            <!-- BMI Calculator -->
+            <div class="feature-card">
+                <i class="fas fa-weight"></i>
+                <h3 id="bmi-title">BMI Calculator</h3>
+                <p id="bmi-description">Calculate your Body Mass Index (BMI) and understand your health status.</p>
+                <div class="bmi-inputs">
+                    <input type="number" id="weight" placeholder="Weight (kg)">
+                    <input type="number" id="height" placeholder="Height (cm)">
+                </div>
+                <button onclick="calculateBMI()" id="bmi-button">Calculate</button>
+                <p id="bmi-result"></p>
+            </div>
+
+            <!-- First Aid Assistant -->
+            <div class="feature-card">
+                <i class="fas fa-first-aid"></i>
+                <h3 id="first-aid-title">First Aid Assistant</h3>
+                <p id="first-aid-description">Get instant first aid tips for common medical emergencies.</p>
+                <select id="firstAidSelector" onchange="showFirstAid()">
+                    <option value="">-- Select an issue --</option>
+                    <option value="bleeding">🩸 Bleeding</option>
+                    <option value="heart-attack">❤️ Heart Attack</option>
+                    <option value="low-sugar">🍬 Low Blood Sugar</option>
+                    <option value="high-bp">💢 High Blood Pressure</option>
+                    <option value="choking">🚨 Choking</option>
+                    <option value="burns">🔥 Burns</option>
+                    <option value="stroke">🧠 Stroke</option>
+                    <option value="seizure">⚡ Seizure</option>
+                    <option value="fainting">💫 Fainting</option>
+                    <option value="asthma">🌬️ Asthma Attack</option>
+                    <option value="hypothermia">❄️ Hypothermia</option>
+                    <option value="heat-stroke">☀️ Heat Stroke</option>
+                    <option value="poisoning">☠️ Poisoning</option>
+                    <option value="fracture">🦴 Fracture</option>
+                    <option value="shock">⚠️ Shock</option>
+                    <option value="nosebleed">👃 Nosebleed</option>
+                    <option value="dizziness">🔄 Dizziness</option>
+                    <option value="parkinsons">🧠 Parkinson’s Emergency</option>
+                    <option value="diabetic-ketoacidosis">💉 Diabetic Ketoacidosis</option>
+                    <option value="chest-pain">💓 Chest Pain</option>
+                </select>
+                
+                <div id="firstAidTips"></div>
+                
+                <div id="firstAidTips" class="first-aid-tips"></div>
+            </div>
+
+            <!-- Nearby Hospitals -->
+            <div class="feature-card">
+                <i class="fas fa-hospital"></i>
+                <h3 id="hospitals-title">Nearby Hospitals</h3>
+                <p id="hospitals-description">Find hospitals in a specific city.</p>
+                <input type="text" id="locationInput" placeholder="Enter city name">
+                <button onclick="findNearbyHospitals()" id="hospitals-button">Find Hospitals</button>
+                <div id="hospital-results">
+                    <div id="hospital-map"></div>
+                    <div id="hospital-list"></div>
+                </div>
+            </div>
+
+            <!-- Medicine Search -->
+            <div class="feature-card">
+                <i class="fas fa-pills"></i>
+                <h3 id="medicine-title">Medicine Search</h3>
+                <p id="medicine-description">Search for a medicine and learn its uses.</p>
+                <input type="text" id="medicineInput" placeholder="Enter medicine name">
+                <button onclick="searchMedicine()" id="medicine-button">Search</button>
+                <div id="medicine-results">
+                    <p id="medicine-uses"></p>
+                </div>
+            </div>
+
+            <!-- Insurance Calculator -->
+            <div class="feature-card">
+                <i class="fas fa-hand-holding-usd"></i>
+                <h3 id="insurance-title">Insurance Calculator</h3>
+                <p id="insurance-description">Calculate your health insurance premium in Indian Rupees.</p>
+                <input type="number" id="ageInput" placeholder="Enter your age">
+                <input type="number" id="incomeInput" placeholder="Enter annual income (₹)">
+                <button onclick="calculateInsurance()" id="insurance-button">Calculate</button>
+                <p id="insurance-result"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p id="footer-text">Created with 💙 by Your Name | <a href="#" id="contact-link">Contact Us</a></p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- JavaScript -->
+    <script>
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const body = document.body;
+            const videoBackground = document.getElementById("video-background");
+            const imageBackground = document.getElementById("image-background");
+            const modeToggleIcon = document.querySelector(".mode-toggle i");
+
+            body.classList.toggle("dark-mode");
+
+            if (body.classList.contains("dark-mode")) {
+                // Enable dark mode
+                videoBackground.style.display = "none";
+                imageBackground.style.display = "none";
+                body.style.backgroundColor = "#000"; // Set background to black
+                modeToggleIcon.classList.remove("fa-moon");
+                modeToggleIcon.classList.add("fa-sun");
+            } else {
+                // Disable dark mode
+                videoBackground.style.display = "block";
+                imageBackground.style.display = "block";
+                body.style.backgroundColor = ""; // Reset background
+                modeToggleIcon.classList.remove("fa-sun");
+                modeToggleIcon.classList.add("fa-moon");
+            }
+        }
+
+        // Background Toggle
+        function toggleBackground() {
+            const videoBackground = document.getElementById("video-background");
+            const imageBackground = document.getElementById("image-background");
+            const toggleButton = document.querySelector(".background-toggle i");
+
+            if (videoBackground.style.display === "none") {
+                videoBackground.style.display = "block";
+                imageBackground.style.display = "none";
+                toggleButton.classList.remove("fa-image");
+                toggleButton.classList.add("fa-video");
+            } else {
+                videoBackground.style.display = "none";
+                imageBackground.style.display = "block";
+                toggleButton.classList.remove("fa-video");
+                toggleButton.classList.add("fa-image");
+            }
+        }
+
+        // BMI Calculator
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById("weight").value);
+            const height = parseFloat(document.getElementById("height").value) / 100; // Convert cm to meters
+
+            if (isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
+                alert("Please enter valid weight and height.");
+                return;
+            }
+
+            const bmi = (weight / (height * height)).toFixed(2);
+            let category = "";
+
+            if (bmi < 18.5) category = "Underweight";
+            else if (bmi >= 18.5 && bmi < 24.9) category = "Normal weight";
+            else if (bmi >= 25 && bmi < 29.9) category = "Overweight";
+            else category = "Obese";
+
+            document.getElementById("bmi-result").innerHTML = `Your BMI is <span class="bmi-value">${bmi}</span> (${category}).`;
+        }
+
+        // First Aid Assistant
+        function showFirstAid() {
+            const issue = document.getElementById("firstAidSelector").value;
+            const firstAidTips = document.getElementById("firstAidTips");
+        
+            const tips = {
+                "bleeding": "🩸 <b>Bleeding:</b><br>1️⃣ Stay calm and assess the wound.<br>2️⃣ 🏥 Wash hands or wear gloves if available.<br>3️⃣ 🚑 Apply firm pressure on the wound with a clean cloth.<br>4️⃣ ✋ Keep pressing for at least 10 minutes without lifting.<br>5️⃣ 🆙 Elevate the injured area above heart level if possible.<br>6️⃣ 🩹 Apply a sterile bandage after bleeding stops.<br>7️⃣ 🚨 If bleeding does not stop or is severe, seek emergency help.",
+                
+                "heart-attack": "❤️ <b>Heart Attack:</b><br>1️⃣ 📞 Call emergency services immediately.<br>2️⃣ 🪑 Have the person sit down and remain calm.<br>3️⃣ 💊 If conscious, give them aspirin to chew (unless allergic).<br>4️⃣ 💨 Encourage slow, deep breathing.<br>5️⃣ 🚑 If unconscious, check for pulse and breathing.<br>6️⃣ 👐 Begin CPR if the person is unresponsive.<br>7️⃣ ⏳ Keep monitoring until medical help arrives.",
+                
+                "low-sugar": "🍬 <b>Low Blood Sugar (Diabetes):</b><br>1️⃣ 🚨 Check for symptoms: sweating, shaking, dizziness.<br>2️⃣ 🍭 Give a sugary snack like candy, fruit juice, or honey.<br>3️⃣ ⏳ Wait 10-15 minutes and check if symptoms improve.<br>4️⃣ 🥪 Follow up with a small meal to maintain blood sugar.<br>5️⃣ 🏥 If unconscious, do NOT give food and call emergency services.<br>6️⃣ 🚑 Seek medical help if symptoms persist or worsen.",
+                
+                "choking": "🚨 <b>Choking:</b><br>1️⃣ 🤔 Ask the person if they can speak or cough.<br>2️⃣ 🙌 If they cannot breathe, stand behind them.<br>3️⃣ 🤲 Perform the Heimlich maneuver: place hands below the ribcage.<br>4️⃣ ↩️ Push inward and upward sharply 5 times.<br>5️⃣ 🔁 Repeat until the object is expelled.<br>6️⃣ 😵‍💫 If unconscious, begin CPR and call for help.",
+                
+                "burns": "🔥 <b>Burns:</b><br>1️⃣ 🚰 Run cool (not ice-cold) water over the burn for 10-15 minutes.<br>2️⃣ 🚫 Do NOT apply ice, butter, or oil.<br>3️⃣ 🩹 Cover with a sterile, non-stick bandage.<br>4️⃣ ⚠️ If blisters form, do NOT pop them.<br>5️⃣ 🏥 Seek medical help if the burn is severe, deep, or larger than a palm.<br>6️⃣ 🚑 If clothing is on fire, STOP, DROP, and ROLL.",
+                
+                "seizure": "⚡ <b>Seizure:</b><br>1️⃣ 🚨 Stay calm and move nearby objects away.<br>2️⃣ 🏋️ Do NOT restrain the person or put anything in their mouth.<br>3️⃣ ⏳ Let the seizure run its course (usually 1-2 minutes).<br>4️⃣ 🤲 Once it stops, turn them on their side in a recovery position.<br>5️⃣ 🚑 Call emergency services if it lasts longer than 5 minutes or repeats.<br>6️⃣ 🛌 Stay with the person until they are fully alert.",
+                
+                "fainting": "💫 <b>Fainting:</b><br>1️⃣ 🚸 Catch them if possible and prevent a fall.<br>2️⃣ 🛏️ Lay them flat on their back and elevate their legs.<br>3️⃣ 💨 Ensure fresh air and loosen tight clothing.<br>4️⃣ 🚰 When they wake up, offer water and reassurance.<br>5️⃣ 🚑 Seek medical help if they do not regain consciousness quickly.",
+                
+                "asthma": "🌬️ <b>Asthma Attack:</b><br>1️⃣ 🧘 Help the person sit upright and stay calm.<br>2️⃣ 💨 Assist them in using their inhaler (if available).<br>3️⃣ ⏳ Encourage slow, deep breaths through the nose.<br>4️⃣ 🚑 If breathing does not improve within 5 minutes, call for help.",
+                
+                "stroke": "🧠 <b>Stroke:</b><br>1️⃣ 🔍 Use FAST: Face drooping, Arm weakness, Speech difficulty, Time to call emergency.<br>2️⃣ 🚑 Call for immediate medical help.<br>3️⃣ 🛑 Do NOT give food, drinks, or medication.<br>4️⃣ 🕒 Note the time symptoms started and relay to paramedics.",
+                
+                "poisoning": "☠️ <b>Poisoning:</b><br>1️⃣ 📞 Call emergency services or a poison control center.<br>2️⃣ 🚫 Do NOT induce vomiting unless instructed.<br>3️⃣ 🍽️ Try to identify the substance ingested.<br>4️⃣ 🚑 If unconscious, check breathing and perform CPR if needed.",
+                
+                "fracture": "🦴 <b>Fracture:</b><br>1️⃣ 🚑 Keep the injured area stable.<br>2️⃣ ⛔ Do NOT move the person unnecessarily.<br>3️⃣ 📏 Apply a splint only if trained.<br>4️⃣ 🩹 Control any bleeding with a clean cloth.<br>5️⃣ 🚨 Seek medical attention immediately.",
+                
+                "heat-stroke": "☀️ <b>Heat Stroke:</b><br>1️⃣ 🌳 Move the person to a cool, shaded place.<br>2️⃣ ❄️ Apply cold compresses to the skin.<br>3️⃣ 🚰 Give small sips of water if they are conscious.<br>4️⃣ 🚑 Call emergency services if they become confused or lose consciousness.",
+                
+                "shock": "⚠️ <b>Shock:</b><br>1️⃣ 🚑 Lay the person down and elevate their legs.<br>2️⃣ 🧣 Keep them warm with a blanket.<br>3️⃣ 💨 Encourage slow, steady breathing.<br>4️⃣ 🚨 Call for immediate medical help.",
+                
+                "nosebleed": "👃 <b>Nosebleed:</b><br>1️⃣ 🪑 Sit upright and lean slightly forward.<br>2️⃣ 🤲 Pinch the nostrils together for 5-10 minutes.<br>3️⃣ ❄️ Apply an ice pack to the bridge of the nose.<br>4️⃣ 🚨 Seek medical help if bleeding lasts more than 15 minutes.",
+                
+                "dizziness": "🔄 <b>Dizziness:</b><br>1️⃣ 🪑 Sit or lie down immediately.<br>2️⃣ 💨 Take slow, deep breaths.<br>3️⃣ 🚰 Drink water if dehydrated.<br>4️⃣ 🚑 If dizziness persists, seek medical attention.",
+                
+                "chest-pain": "💓 <b>Chest Pain:</b><br>1️⃣ 🚑 Call emergency services if pain lasts more than a few minutes.<br>2️⃣ 🪑 Have the person sit and rest.<br>3️⃣ 💊 If not allergic, give aspirin to chew.<br>4️⃣ 💨 Encourage slow breathing and stay with them.<br>5️⃣ 🚨 Start CPR if they lose consciousness.",
+            };
+        
+            firstAidTips.innerHTML = tips[issue] || "⚠️ Select an emergency type to see detailed first aid instructions.";
+        }
+        
+        
+
+        // Nearby Hospitals with Leaflet.js and OpenStreetMap
+        let map;
+        let markers = [];
+        let hospitalData = [];
+
+        function findNearbyHospitals() {
+            const location = document.getElementById("locationInput").value;
+            if (!location) {
+                alert("Please enter a city name.");
+                return;
+            }
+
+            // Clear previous map and markers
+            if (map) {
+                map.remove();
+            }
+            markers.forEach(marker => marker.remove());
+            markers = [];
+            hospitalData = [];
+
+            // Use OpenStreetMap Nominatim API to get coordinates
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        alert("City not found. Please try again.");
+                        return;
+                    }
+
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+
+                    // Initialize the map
+                    map = L.map('hospital-map').setView([lat, lng], 13);
+
+                    // Use OpenStreetMap tiles
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+
+                    // Add a marker for the searched location
+                    const locationMarker = L.marker([lat, lng]).addTo(map)
+                        .bindPopup(`Searched Location: ${location}`)
+                        .openPopup();
+                    markers.push(locationMarker);
+
+                    // Search for hospitals using Overpass API
+                    fetch(`https://overpass-api.de/api/interpreter?data=[out:json];node[amenity=hospital](around:10000,${lat},${lng});out;`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const hospitalList = document.getElementById("hospital-list");
+                            hospitalList.innerHTML = "<h4>Nearby Hospitals:</h4>"; // Clear previous results
+
+                            data.elements.forEach((place) => {
+                                const hospitalName = place.tags.name || "Unnamed Hospital";
+                                const hospitalLat = place.lat;
+                                const hospitalLon = place.lon;
+
+                                // Add a marker for each hospital
+                                const hospitalMarker = L.marker([hospitalLat, hospitalLon]).addTo(map)
+                                    .bindPopup(hospitalName);
+                                markers.push(hospitalMarker);
+
+                                // Store hospital data for click functionality
+                                hospitalData.push({ name: hospitalName, lat: hospitalLat, lon: hospitalLon, marker: hospitalMarker });
+
+                                // Display hospital name in the list
+                                hospitalList.innerHTML += `<p onclick="highlightHospital(${hospitalData.length - 1})">🏥 ${hospitalName}</p>`;
+                            });
+                        })
+                        .catch(error => {
+                            console.error("Error fetching hospital data:", error);
+                            alert("Unable to fetch hospital data. Please try again later.");
+                        });
+                })
+                .catch(error => {
+                    console.error("Error fetching location data:", error);
+                    alert("Unable to fetch location data. Please try again later.");
+                });
+        }
+
+        // Highlight hospital on map when clicked in the list
+        function highlightHospital(index) {
+            const hospital = hospitalData[index];
+            map.setView([hospital.lat, hospital.lon], 15); // Zoom to the hospital
+            hospital.marker.openPopup(); // Open the marker's popup
+        }
+
+        // Medicine Search with OpenFDA API
+        const openFDAKey = "OImdrEOGbhdirwridjNuga4GFS2SlCccEATfm39e";
+
+        // Mock medicine data (fallback)
+        const mockMedicineData = {
+            "paracetamol": "Used to treat pain and fever.",
+            "acetaminophen": "Used to treat pain and fever.",
+            "ibuprofen": "Used to relieve pain, inflammation, and fever.",
+            "amoxicillin": "An antibiotic used to treat bacterial infections.",
+            "cetirizine": "Used to treat allergies and hay fever.",
+            "omeprazole": "Used to treat stomach acid-related conditions like heartburn and GERD.",
+            "metformin": "Used to manage blood sugar levels in type 2 diabetes.",
+            "atorvastatin": "Used to lower cholesterol and reduce the risk of heart disease.",
+            "aspirin": "Used to relieve pain, reduce fever, and prevent blood clots.",
+            "lisinopril": "Used to treat high blood pressure and heart failure.",
+            "levothyroxine": "Used to treat hypothyroidism (underactive thyroid)."
+        };
+
+        async function searchMedicine() {
+            const medicineName = document.getElementById("medicineInput").value.trim().toLowerCase();
+            if (!medicineName) {
+                alert("Please enter a medicine name.");
+                return;
+            }
+
+            try {
+                // Fetch data from OpenFDA API
+                const response = await fetch(
+                    `https://api.fda.gov/drug/label.json?api_key=${openFDAKey}&search=openfda.generic_name:"${medicineName}"&limit=1`
+                );
+                const data = await response.json();
+
+                let uses = "Medicine not found. Please check the spelling or try another name.";
+
+                // Check if results are available
+                if (data.results && data.results.length > 0) {
+                    uses = data.results[0].indications_and_usage || "Uses not specified.";
+                } else {
+                    // Fallback to mock data
+                    uses = mockMedicineData[medicineName] || uses;
+                }
+
+                // Display the results
+                document.getElementById("medicine-uses").innerText = uses;
+            } catch (error) {
+                console.error("Error fetching medicine data:", error);
+                document.getElementById("medicine-uses").innerText = "Unable to fetch medicine data. Please try again later.";
+            }
+        }
+
+        // Insurance Calculator
+        function calculateInsurance() {
+            const age = parseInt(document.getElementById("ageInput").value);
+            const income = parseInt(document.getElementById("incomeInput").value);
+
+            if (isNaN(age) || isNaN(income)) {
+                alert("Please enter valid age and income.");
+                return;
+            }
+
+            const premium = (income * 0.05) + (age * 100); // Example calculation
+            document.getElementById("insurance-result").innerText = `Estimated Premium: ₹${premium.toFixed(2)}`;
+        }
+
+        // Google Translate Initialization
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                { pageLanguage: 'en' }, // Default language is English
+                'google_translate_element' // Element ID where the widget will be placed
+            );
+        }
+    </script>
+</body>
+</html>

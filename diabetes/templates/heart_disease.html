@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/heart_disease.css') }}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="heart-container">
+        <h1><i class="fas fa-heartbeat"></i> Heart Disease Prediction</h1>
+        <p>Enter your details below to check your risk.</p>
+
+        <img src="{{ url_for('static', filename='images/healthy-heart-raises-bar-weights-world-health-day-112780065.webp') }}" alt="Heart Image" class="heart-image">
+
+        <!-- Prediction Form -->
+        <form method="POST" id="heart-form">
+            {% for field in fields %}
+                <label for="{{ field }}"><i class="fas fa-user-md"></i> {{ field }}:</label>
+                <input type="number" name="{{ field }}" step="any" required class="input-field">
+            {% endfor %}
+            <button type="submit"><i class="fas fa-stethoscope"></i> Predict</button>
+        </form>
+
+        <!-- Result Section -->
+        <div id="result-section" style="display: none;">
+            <div class="result-box">
+                <h3 id="prediction-result">Result: --</h3>
+                <p id="emoji-indicator">😊</p>
+            </div>
+
+            <!-- AI Chat Response -->
+            <div class="ai-response">
+                <h3>AI Advice</h3>
+                <p id="ai-message">Your health tips will appear here.</p>
+            </div>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+
+    </div>
+    <div class="dark-mode-switch">
+        <label class="switch">
+            <input type="checkbox" id="dark-mode-toggle">
+            <span class="slider"></span>
+        </label>
+        <p>Dark Mode</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/heart_disease.js') }}"></script>
+</body>
+</html>

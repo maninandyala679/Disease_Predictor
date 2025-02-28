@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parkinson's Disease Prediction</title>
+    <link rel="stylesheet" href="static/css/parkinsons.css">
+</head>
+<body>
+    <div class="parkinsons-container">
+        <h1>Parkinson's Disease Prediction</h1>
+        <img src="static/images/parkinson.gif" alt="Brain Image" class="parkinsons-image">
+        <form id="parkinsons-form">
+            <!-- Fields dynamically generated from the backend -->
+            {% for field in fields %}
+            <input type="number" name="{{ field }}" placeholder="{{ field | replace('_', ' ') }}" step="any" required>
+
+            {% endfor %}
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result-section" class="result-box" style="display: none;">
+            <p id="prediction-result"></p>
+            <p id="emoji-indicator"></p>
+            <p id="ai-message"></p>
+        </div>
+        
+        <!-- Dark Mode Toggle -->
+        <div class="dark-mode-switch">
+            <label>Dark Mode</label>
+            <label class="switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    <script src="static/js/parkinsons.js"></script>
+</body>
+</html>

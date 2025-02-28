@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ disease }} Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <h1 class="header">{{ disease }} Prediction</h1>
+        <form action="{{ url_for(action) }}" method="post">
+            <input type="text" name="feature1" class="form-control" placeholder="Enter feature 1" required>
+            <input type="text" name="feature2" class="form-control" placeholder="Enter feature 2" required>
+            <!-- Add necessary input fields for each disease -->
+            <button type="submit" class="btn-primary">Predict</button>
+        </form>
+
+        {% if prediction_text %}
+        <div class="alert">{{ prediction_text }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
